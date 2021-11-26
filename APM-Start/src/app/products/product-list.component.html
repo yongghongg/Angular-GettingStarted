@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-header">{{ pageTitle }}</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <span>Filtered by: </span>
+        <input type="text" />
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><button class="btn btn-primary">Show Image</button></th>
+            <th>Product</th>
+            <th>Code</th>
+            <th>Available</th>
+            <th>Price</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of productList">
+            <td></td>
+            <td>{{p.productName}}</td>
+            <td>{{p.productCode}}</td>
+            <td>{{p.releaseDate}}</td>
+            <td>${{p.price}}</td>
+            <td>{{p.starRating}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
