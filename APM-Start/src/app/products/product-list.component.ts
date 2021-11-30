@@ -1,12 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { IProduct } from './product';
 
 @Component({
   selector: 'pm-products',
   templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.css'],
 })
-export class ProductListComponent {
-  pageTitle: string = 'Product List';
-  productList: any[] = [
+export class ProductListComponent implements OnInit, OnChanges {
+  ngOnChanges(changes: SimpleChanges): void {
+    throw new Error('Method not implemented.');
+  }
+  ngOnInit(): void {
+    this.filterText = '';
+  }
+  pageTitle = 'Product List';
+  imageWidth = 50;
+  imageMargin = 2;
+  showImage = false;
+  // filterText = 'cart';
+
+  private _filterText: string = '';
+  get filterText(): string {
+    return this._filterText;
+  }
+  set filterText(value: string) {
+    this._filterText = value;
+    this.filteredProductList = this.productList.filter(p => p.productName.toLocaleLowerCase().includes(this._filterText));
+  }
+
+  productList: IProduct[] = [
     {
       productId: 1,
       productName: 'Leaf Rake',
@@ -38,4 +60,12 @@ export class ProductListComponent {
       imageUrl: 'assets/images/hammer.png',
     },
   ];
+  filteredProductList: IProduct[] = this.productList;
+
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
+  onRatingClicked(message: string): void {
+    this.pageTitle = message;
+  }
 }

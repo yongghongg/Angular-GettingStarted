@@ -2,16 +2,25 @@
   <div class="card-header">{{ pageTitle }}</div>
   <div class="card-body">
     <div class="row">
-      <div class="col-md-6">
-        <span>Filtered by: </span>
-        <input type="text" />
+      <div class="col-md-2">
+        <span>Filter by: </span>
       </div>
+      <div class="col-md-4">
+        <input type="text" [(ngModel)]="filterText" />
+      </div>
+    </div>
+    <div class="row">
+      <h4 class="col-md-6">Filtered by: {{ filterText }}</h4>
     </div>
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th><button class="btn btn-primary">Show Image</button></th>
+            <th>
+              <button class="btn btn-primary" (click)="toggleImage()">
+                {{ showImage ? "Hide Image" : "Show Image" }}
+              </button>
+            </th>
             <th>Product</th>
             <th>Code</th>
             <th>Available</th>
@@ -20,13 +29,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of productList">
-            <td></td>
-            <td>{{p.productName}}</td>
-            <td>{{p.productCode}}</td>
-            <td>{{p.releaseDate}}</td>
-            <td>${{p.price}}</td>
-            <td>{{p.starRating}}</td>
+          <tr *ngFor="let p of filteredProductList">
+            <td>
+              <img
+                [src]="p.imageUrl"
+                [title]="p.productName"
+                alt=""
+                [style.width.px]="imageWidth"
+                [style.margin.px]="imageMargin"
+                *ngIf="showImage"
+              />
+            </td>
+            <td>{{ p.productName }}</td>
+            <td>{{ p.productCode | convertToSpaces:'-' }}</td>
+            <td>{{ p.releaseDate }}</td>
+            <td>{{ p.price | currency:'USD':'symbol' }}</td>
+            <td><pm-star [rating]="p.starRating" (ratingClicked)="onRatingClicked($event)"></pm-star></td>
+            <!-- <td>{{ p.starRating }}</td> -->
           </tr>
         </tbody>
       </table>
