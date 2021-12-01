@@ -40,11 +40,19 @@
                 *ngIf="showImage"
               />
             </td>
-            <td>{{ p.productName }}</td>
-            <td>{{ p.productCode | convertToSpaces:'-' }}</td>
+            <td>
+              <a [routerLink]="['/products', p.productId]">{{ p.productName }}</a
+              >
+            </td>
+            <td>{{ p.productCode | convertToSpaces: "-" }}</td>
             <td>{{ p.releaseDate }}</td>
-            <td>{{ p.price | currency:'USD':'symbol' }}</td>
-            <td><pm-star [rating]="p.starRating" (ratingClicked)="onRatingClicked($event)"></pm-star></td>
+            <td>{{ p.price | currency: "USD":"symbol" }}</td>
+            <td>
+              <pm-star
+                [rating]="p.starRating"
+                (ratingClicked)="onRatingClicked($event)"
+              ></pm-star>
+            </td>
             <!-- <td>{{ p.starRating }}</td> -->
           </tr>
         </tbody>
