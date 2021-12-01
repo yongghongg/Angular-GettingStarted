@@ -1,23 +1,31 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { Subscription } from 'rxjs';
 import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
   selector: 'pm-products',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
+  providers: [ProductService],
 })
-export class ProductListComponent implements OnInit, OnChanges {
-  ngOnChanges(changes: SimpleChanges): void {
-    throw new Error('Method not implemented.');
-  }
-  ngOnInit(): void {
-    this.filterText = '';
-  }
+export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
+  constructor(private productService: ProductService) {}
+
+  errorMsg = '';
   pageTitle = 'Product List';
   imageWidth = 50;
   imageMargin = 2;
   showImage = false;
-  // filterText = 'cart';
+  sub!: Subscription;
+  productList: IProduct[] = [];
+  filteredProductList: IProduct[] = [];
 
   private _filterText: string = '';
   get filterText(): string {
@@ -25,42 +33,28 @@ export class ProductListComponent implements OnInit, OnChanges {
   }
   set filterText(value: string) {
     this._filterText = value;
-    this.filteredProductList = this.productList.filter(p => p.productName.toLocaleLowerCase().includes(this._filterText));
+    this.filteredProductList = this.productList.filter((p) =>
+      p.productName.toLocaleLowerCase().includes(this._filterText)
+    );
   }
 
-  productList: IProduct[] = [
-    {
-      productId: 1,
-      productName: 'Leaf Rake',
-      productCode: 'GDN-0011',
-      releaseDate: 'March 19, 2021',
-      description: 'Leaf rake with 48-inch wooden handle.',
-      price: 19.95,
-      starRating: 3.2,
-      imageUrl: 'assets/images/leaf_rake.png',
-    },
-    {
-      productId: 2,
-      productName: 'Garden Cart',
-      productCode: 'GDN-0023',
-      releaseDate: 'March 18, 2021',
-      description: '15 gallon capacity rolling garden cart',
-      price: 32.99,
-      starRating: 4.2,
-      imageUrl: 'assets/images/garden_cart.png',
-    },
-    {
-      productId: 5,
-      productName: 'Hammer',
-      productCode: 'TBX-0048',
-      releaseDate: 'May 21, 2021',
-      description: 'Curved claw steel hammer',
-      price: 8.9,
-      starRating: 4.8,
-      imageUrl: 'assets/images/hammer.png',
-    },
-  ];
-  filteredProductList: IProduct[] = this.productList;
+  ngOnChanges(changes: SimpleChanges): void {
+    throw new Error('Method not implemented.');
+  }
+  ngOnInit(): void {
+    // subscribe to product observable
+    this.sub = this.productService.getProducts().subscribe({
+      next: (products) => {
+        this.productList = products;
+        this.filteredProductList = this.productList;
+      },
+      error: (err) => (this.errorMsg = err),
+    });
+    // this.productList = this.productService.getProducts();
+  }
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
 
   toggleImage(): void {
     this.showImage = !this.showImage;
